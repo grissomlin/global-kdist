@@ -1,0 +1,246 @@
+version: 1
+
+data_root: "data"
+
+downloader:
+  interval: "1d"
+  auto_adjust: true
+  batch_size: 200
+  threads: true
+  timeout_sec: 60
+  retry: 2
+  sleep_sec: 0.05
+
+markets:
+
+  # =========================
+  # United States
+  # =========================
+  us:
+    module: "markets.us"
+    out_dir: "data/us/dayK"
+    enabled: true
+    week_rule: "W-FRI"
+    month_rule: "ME"
+    year_rule: "YE"
+    limit: 0
+
+    tick_distortion_filter_on: true
+    tick_distortion_mode: "both"
+    tick_distortion_threshold_pct: 10.0
+    tick_distortion_min_ratio: 0.5
+
+    low_price_filter_on: false
+
+
+  # =========================
+  # Canada (TSX / TSXV)
+  # =========================
+  ca:
+    module: "markets.ca"
+    out_dir: "data/ca/dayK"
+    enabled: true
+    week_rule: "W-FRI"
+    month_rule: "ME"
+    year_rule: "YE"
+    limit: 0
+
+    tick_distortion_filter_on: true
+    tick_distortion_mode: "both"
+    tick_distortion_threshold_pct: 10.0
+    tick_distortion_min_ratio: 0.5
+
+    low_price_filter_on: false
+
+
+  # =========================
+  # United Kingdom (LSE)
+  # =========================
+  uk:
+    module: "markets.uk"
+    out_dir: "data/uk/dayK"
+    enabled: true
+    week_rule: "W-FRI"
+    month_rule: "ME"
+    year_rule: "YE"
+    limit: 0
+
+    tick_distortion_filter_on: true
+    tick_distortion_mode: "both"
+    tick_distortion_threshold_pct: 10.0
+    tick_distortion_min_ratio: 0.5
+
+    low_price_filter_on: false
+
+
+  # =========================
+  # Hong Kong (HKEX)
+  # =========================
+  hk:
+    module: "markets.hk"
+    out_dir: "data/hk/dayK"
+    enabled: true
+    week_rule: "W-FRI"
+    month_rule: "ME"
+    year_rule: "YE"
+    limit: 0
+
+    tick_distortion_filter_on: true
+    tick_distortion_mode: "both"
+    tick_distortion_threshold_pct: 10.0
+    tick_distortion_min_ratio: 0.5
+
+    low_price_filter_on: false
+
+
+  # =========================
+  # Australia (ASX)
+  # =========================
+  au:
+    module: "markets.au"
+    out_dir: "data/au/dayK"
+    enabled: true
+    week_rule: "W-FRI"
+    month_rule: "ME"
+    year_rule: "YE"
+    limit: 0
+
+    tick_distortion_filter_on: true
+    tick_distortion_mode: "both"
+    tick_distortion_threshold_pct: 10.0
+    tick_distortion_min_ratio: 0.5
+
+    low_price_filter_on: false
+
+
+  # =========================
+  # Japan (TSE)
+  # =========================
+  jp:
+    module: "markets.jp"
+    out_dir: "data/jp/dayK"
+    enabled: true
+    week_rule: "W-FRI"
+    month_rule: "ME"
+    year_rule: "YE"
+    limit: 0
+
+    include_tokyo_pro: false
+    list_url: "https://www.jpx.co.jp/english/markets/statistics-equities/misc/tvdivq0000001vg2-att/data_e.xls"
+
+    tick_distortion_filter_on: true
+    tick_distortion_mode: "both"
+    tick_distortion_threshold_pct: 10.0
+    tick_distortion_min_ratio: 0.5
+
+    low_price_filter_on: false
+
+
+  # =========================
+  # South Korea (KRX)
+  # =========================
+  kr:
+    module: "markets.kr"
+    out_dir: "data/kr/dayK"
+    enabled: true
+    week_rule: "W-FRI"
+    month_rule: "ME"
+    year_rule: "YE"
+    limit: 0
+
+    tick_distortion_filter_on: true
+    tick_distortion_mode: "both"
+    tick_distortion_threshold_pct: 10.0
+    tick_distortion_min_ratio: 0.5
+
+    low_price_filter_on: false
+
+
+  # =========================
+  # Taiwan (TWSE / TPEx)
+  # =========================
+  tw:
+    module: "markets.tw"
+    out_dir: "data/tw/dayK"
+    enabled: true
+    week_rule: "W-FRI"
+    month_rule: "ME"
+    year_rule: "YE"
+    limit: 0
+
+    tick_distortion_filter_on: true
+    tick_distortion_mode: "both"
+    tick_distortion_threshold_pct: 10.0
+    tick_distortion_min_ratio: 0.5
+
+    low_price_filter_on: false
+
+
+  # =========================
+  # China (SSE / SZSE)
+  # =========================
+  cn:
+    module: "markets.cn"
+    out_dir: "data/cn/dayK"
+    enabled: true
+    week_rule: "W-FRI"
+    month_rule: "ME"
+    year_rule: "YE"
+    limit: 0
+
+    tick_distortion_filter_on: true
+    tick_distortion_mode: "both"
+    tick_distortion_threshold_pct: 10.0
+    tick_distortion_min_ratio: 0.5
+
+    low_price_filter_on: false
+
+
+  # =========================
+  # Thailand (SET)
+  # =========================
+  th:
+    module: "markets.th"
+    out_dir: "data/th/dayK"
+    enabled: true
+    week_rule: "W-FRI"
+    month_rule: "ME"
+    year_rule: "YE"
+    limit: 0
+
+    tick_distortion_filter_on: true
+    tick_distortion_mode: "both"
+    tick_distortion_threshold_pct: 10.0
+    tick_distortion_min_ratio: 0.5
+
+    low_price_filter_on: false
+
+
+  # =========================
+  # Germany (Deutsche Börse)
+  # =========================
+  de:
+    module: "markets.germany"
+    out_dir: "data/de/dayK"
+    enabled: false
+    week_rule: "W-FRI"
+    month_rule: "ME"
+    year_rule: "YE"
+    limit: 0
+
+    yf_suffix: ".DE"
+    only_common: true
+
+    segments:
+      - "Prime Standard"
+      - "General Standard"
+      - "Entry Standard"
+
+    list_url: "https://www.cashmarket.deutsche-boerse.com/resource/blob/313988/f4f80e006bf17d42e84dfb4b6b9ef341/data/Gelistete-Unternehmen.xls"
+
+    tick_distortion_filter_on: true
+    tick_distortion_mode: "both"
+    tick_distortion_threshold_pct: 10.0
+    tick_distortion_min_ratio: 0.5
+
+    low_price_filter_on: false

@@ -1,0 +1,12 @@
+﻿market,files,ok,fail,skipped,filtered_tick_distortion,filtered_low_price,empty_after_clean,scale_fixed_files,eligible_after_clean,eligible_after_tick_filter,eligible_after_all_filters,coverage_before_filter_pct,coverage_after_tick_filter_pct,coverage_after_all_filters_pct,rows_input_total,rows_after_read_total,rows_after_ohlc_total,rows_after_scale_total,rows_after_corporate_actions_total,rows_after_ghost_total,rows_after_ipo_guard_total,rows_after_extreme_total,rows_after_penny_total,ohlc_rows_removed_total,corporate_action_rows_removed_total,ghost_rows_removed_total,extreme_rows_removed_total,penny_rows_removed_total,ipo_exempt_rows_total,empty_after_ohlc,empty_after_scale,empty_after_corporate_actions,empty_after_ghost,empty_after_ipo_guard,empty_after_extreme,empty_after_penny
+us,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+ca,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+uk,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+hk,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+au,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+jp,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+kr,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+tw,2316,2316,0,0,0,0,0,0,2316,2316,2316,100.0,100.0,100.0,3486676,3486676,3486676,3486676,3486676,3486676,3486676,3486670,3486670,0,0,0,6,0,11580,0,0,0,0,0,0,0
+cn,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+th,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+fr,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0

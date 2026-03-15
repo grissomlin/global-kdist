@@ -1,0 +1,12 @@
+mode: backfill
+
+date_range:
+  start: "2020-01-01"
+  end: "2025-12-31"
+
+download:
+  period: "max"
+  interval: "1d"
+  max_workers: 6
+  pause_sec: 0.5
+  retry_times: 2

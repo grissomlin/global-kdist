@@ -1,0 +1,132 @@
+# configs/markets.yaml
+version: 1
+
+data_root: "data"
+
+downloader:
+  interval: "1d"
+  auto_adjust: true
+  batch_size: 200
+  threads: true
+  timeout_sec: 60
+  retry: 2
+  sleep_sec: 0.05
+
+markets:
+
+  us:
+    module: "markets.us"
+    out_dir: "data/us/dayK"
+    enabled: true
+    week_rule: "W-FRI"
+    month_rule: "ME"
+    year_rule: "YE"
+    limit: 0
+    low_price_filter_on: true
+    low_price_mode: "both"
+    low_price_min_ratio: 0.5
+
+  ca:
+    module: "markets.ca"
+    out_dir: "data/ca/dayK"
+    enabled: true
+    week_rule: "W-FRI"
+    month_rule: "ME"
+    year_rule: "YE"
+    limit: 0
+    low_price_filter_on: true
+    low_price_mode: "both"
+    low_price_min_ratio: 0.5
+
+  uk:
+    module: "markets.uk"
+    out_dir: "data/uk/dayK"
+    enabled: true
+    week_rule: "W-FRI"
+    month_rule: "ME"
+    year_rule: "YE"
+    limit: 0
+    low_price_filter_on: true
+    low_price_mode: "both"
+    low_price_min_ratio: 0.5
+
+  hk:
+    module: "markets.hk"
+    out_dir: "data/hk/dayK"
+    enabled: true
+    week_rule: "W-FRI"
+    month_rule: "ME"
+    year_rule: "YE"
+    limit: 0
+    low_price_filter_on: true
+    low_price_mode: "both"
+    low_price_min_ratio: 0.5
+
+  au:
+    module: "markets.au"
+    out_dir: "data/au/dayK"
+    enabled: true
+    week_rule: "W-FRI"
+    month_rule: "ME"
+    year_rule: "YE"
+    limit: 0
+    low_price_filter_on: true
+    low_price_mode: "both"
+    low_price_min_ratio: 0.5
+
+  jp:
+    module: "markets.jp"
+    out_dir: "data/jp/dayK"
+    enabled: true
+    week_rule: "W-FRI"
+    month_rule: "ME"
+    year_rule: "YE"
+    limit: 0
+    include_tokyo_pro: false
+    list_url: "https://www.jpx.co.jp/english/markets/statistics-equities/misc/tvdivq0000001vg2-att/data_e.xls"
+    low_price_filter_on: true
+    low_price_mode: "both"
+    low_price_min_ratio: 0.5
+
+  kr:
+    module: "markets.kr"
+    out_dir: "data/kr/dayK"
+    enabled: true
+    week_rule: "W-FRI"
+    month_rule: "ME"
+    year_rule: "YE"
+    limit: 0
+    low_price_filter_on: true
+    low_price_mode: "both"
+    low_price_min_ratio: 0.5
+
+  tw:
+    module: "markets.tw"
+    out_dir: "data/tw/dayK"
+    enabled: true
+    week_rule: "W-FRI"
+    month_rule: "ME"
+    year_rule: "YE"
+    limit: 0
+    low_price_filter_on: true
+    low_price_mode: "both"
+    low_price_min_ratio: 0.5
+
+  de:
+    module: "markets.germany"
+    out_dir: "data/de/dayK"
+    enabled: false
+    week_rule: "W-FRI"
+    month_rule: "ME"
+    year_rule: "YE"
+    limit: 0
+    yf_suffix: ".DE"
+    only_common: true
+    segments:
+      - "Prime Standard"
+      - "General Standard"
+      - "Entry Standard"
+    list_url: "https://www.cashmarket.deutsche-boerse.com/resource/blob/313988/f4f80e006bf17d42e84dfb4b6b9ef341/data/Gelistete-Unternehmen.xls"
+    low_price_filter_on: true
+    low_price_mode: "both"
+    low_price_min_ratio: 0.5

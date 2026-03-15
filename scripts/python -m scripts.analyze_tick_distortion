@@ -1,0 +1,244 @@
+# scripts/analyze_weekly_tail_markets.py
+# -*- coding: utf-8 -*-
+from __future__ import annotations
+
+import sys
+from pathlib import Path
+from typing import Dict, List
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import yaml
+
+
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.append(str(ROOT))
+
+DATA_ROOT = ROOT / "data"
+MARKETS_YAML = ROOT / "configs" / "markets.yaml"
+OUT_DIR = DATA_ROOT / "research" / "tail_charts"
+OUT_DIR.mkdir(parents=True, exist_ok=True)
+
+
+# ============================================================
+# Config helpers
+# ============================================================
+def _load_yaml(path: Path) -> dict:
+    if not path.exists():
+        raise FileNotFoundError(f"Missing config file: {path}")
+    return yaml.safe_load(path.read_text(encoding="utf-8")) or {}
+
+
+def _load_enabled_markets() -> List[str]:
+    cfg = _load_yaml(MARKETS_YAML)
+    markets = cfg.get("markets", {}) or {}
+    if not isinstance(markets, dict):
+        raise TypeError("configs/markets.yaml: 'markets' must be a dict")
+
+    out: List[str] = []
+    for code, m in markets.items():
+        if not isinstance(m, dict):
+            continue
+        if bool(m.get("enabled", False)):
+            out.append(str(code).strip().lower())
+    return out
+
+
+# ============================================================
+# Read weekly returns
+# ============================================================
+def read_market_weekly_close_returns(
+    market_code: str,
+    *,
+    start_year: int = 2020,
+    end_year: int = 2025,
+    ret_col: str = "ret_close_W",
+) -> pd.Series:
+    week_dir = DATA_ROOT / "derived" / "weekK" / market_code
+    if not week_dir.exists():
+        raise FileNotFoundError(f"weekK dir not found: {week_dir}")
+
+    csvs = sorted(week_dir.glob("*.csv"))
+    if not csvs:
+        raise FileNotFoundError(f"No weekK csv found: {week_dir}")
+
+    vals: List[float] = []
+
+    for p in csvs:
+        try:
+            df = pd.read_csv(p, usecols=["date", ret_col])
+            df["date"] = pd.to_datetime(df["date"], errors="coerce")
+            df = df.dropna(subset=["date", ret_col]).copy()
+            if df.empty:
+                continue
+
+            df = df[(df["date"].dt.year >= start_year) & (df["date"].dt.year <= end_year)].copy()
+            if df.empty:
+                continue
+
+            s = pd.to_numeric(df[ret_col], errors="coerce") * 100.0
+            s = s.dropna()
+            if not s.empty:
+                vals.extend(s.tolist())
+        except Exception:
+            continue
+
+    return pd.Series(vals, dtype="float64")
+
+
+# ============================================================
+# Stats
+# ============================================================
+def build_tail_summary(
+    markets: List[str],
+    *,
+    start_year: int = 2020,
+    end_year: int = 2025,
+) -> pd.DataFrame:
+    rows = []
+
+    for market in markets:
+        try:
+            s = read_market_weekly_close_returns(
+                market,
+                start_year=start_year,
+                end_year=end_year,
+                ret_col="ret_close_W",
+            )
+            s = s.dropna()
+            if s.empty:
+                continue
+
+            rows.append(
+                {
+                    "Market": market.upper(),
+                    "Samples": int(len(s)),
+                    "MedianRet_%": float(np.percentile(s, 50)),
+                    "P90_%": float(np.percentile(s, 90)),
+                    "P95_%": float(np.percentile(s, 95)),
+                    "P99_%": float(np.percentile(s, 99)),
+                    "Max_%": float(s.max()),
+                    "Mean_%": float(s.mean()),
+                    "Std_%": float(s.std(ddof=0)),
+                    "Pct_ge_50": float((s >= 50.0).mean() * 100.0),
+                    "Pct_ge_100": float((s >= 100.0).mean() * 100.0),
+                }
+            )
+        except Exception as e:
+            print(f"⚠️ Skip {market}: {e}")
+
+    out = pd.DataFrame(rows)
+    if out.empty:
+        raise RuntimeError("No market data loaded for tail summary.")
+
+    out = out.sort_values("P99_%", ascending=False).reset_index(drop=True)
+    return out
+
+
+# ============================================================
+# Plot 1: Top tail percentiles
+# ============================================================
+def plot_top_tail_percentiles(df: pd.DataFrame, *, out_path: Path) -> None:
+    # sort by P99
+    d = df.sort_values("P99_%", ascending=False).reset_index(drop=True)
+
+    markets = d["Market"].tolist()
+    x = np.arange(len(markets))
+    width = 0.22
+
+    plt.figure(figsize=(14, 7))
+    plt.bar(x - width, d["P90_%"], width=width, label="P90")
+    plt.bar(x, d["P95_%"], width=width, label="P95")
+    plt.bar(x + width, d["P99_%"], width=width, label="P99")
+
+    plt.xticks(x, markets)
+    plt.ylabel("Weekly close return (%)")
+    plt.title("Top Tail of Weekly Return Distribution Across Markets (2020–2025)")
+    plt.legend()
+    plt.grid(axis="y", alpha=0.25)
+
+    for i, v in enumerate(d["P99_%"].tolist()):
+        plt.text(i + width, v, f"{v:.1f}", ha="center", va="bottom", fontsize=9)
+
+    plt.tight_layout()
+    plt.savefig(out_path, dpi=220, bbox_inches="tight")
+    plt.close()
+
+
+# ============================================================
+# Plot 2: Fat-tail incidence
+# ============================================================
+def plot_extreme_incidence(df: pd.DataFrame, *, out_path: Path) -> None:
+    d = df.sort_values("Pct_ge_100", ascending=False).reset_index(drop=True)
+
+    markets = d["Market"].tolist()
+    x = np.arange(len(markets))
+    width = 0.35
+
+    plt.figure(figsize=(14, 7))
+    plt.bar(x - width / 2, d["Pct_ge_50"], width=width, label="Weekly return ≥ 50%")
+    plt.bar(x + width / 2, d["Pct_ge_100"], width=width, label="Weekly return ≥ 100%")
+
+    plt.xticks(x, markets)
+    plt.ylabel("Share of weekly observations (%)")
+    plt.title("Extreme Weekly Return Incidence Across Markets (2020–2025)")
+    plt.legend()
+    plt.grid(axis="y", alpha=0.25)
+
+    for i, v in enumerate(d["Pct_ge_100"].tolist()):
+        plt.text(i + width / 2, v, f"{v:.2f}%", ha="center", va="bottom", fontsize=9)
+
+    plt.tight_layout()
+    plt.savefig(out_path, dpi=220, bbox_inches="tight")
+    plt.close()
+
+
+# ============================================================
+# Plot 3: Boxplot of upper tail proxies
+# ============================================================
+def plot_summary_scatter(df: pd.DataFrame, *, out_path: Path) -> None:
+    d = df.sort_values("P99_%", ascending=False).reset_index(drop=True)
+
+    plt.figure(figsize=(12, 7))
+    plt.scatter(d["P99_%"], d["Pct_ge_100"], s=80)
+
+    for _, r in d.iterrows():
+        plt.text(r["P99_%"], r["Pct_ge_100"], f" {r['Market']}", va="center", fontsize=10)
+
+    plt.xlabel("P99 weekly return (%)")
+    plt.ylabel("Share of weekly returns ≥ 100% (%)")
+    plt.title("Market Tail Thickness: P99 vs Extreme Incidence (2020–2025)")
+    plt.grid(alpha=0.25)
+
+    plt.tight_layout()
+    plt.savefig(out_path, dpi=220, bbox_inches="tight")
+    plt.close()
+
+
+# ============================================================
+# Main
+# ============================================================
+def main():
+    markets = _load_enabled_markets()
+
+    df = build_tail_summary(markets, start_year=2020, end_year=2025)
+
+    out_csv = OUT_DIR / "weekly_tail_summary_2020_2025.csv"
+    df.to_csv(out_csv, index=False, encoding="utf-8-sig")
+
+    plot_top_tail_percentiles(df, out_path=OUT_DIR / "weekly_tail_percentiles_2020_2025.png")
+    plot_extreme_incidence(df, out_path=OUT_DIR / "weekly_tail_incidence_2020_2025.png")
+    plot_summary_scatter(df, out_path=OUT_DIR / "weekly_tail_scatter_2020_2025.png")
+
+    print("✅ Saved:")
+    print(" ", out_csv)
+    print(" ", OUT_DIR / "weekly_tail_percentiles_2020_2025.png")
+    print(" ", OUT_DIR / "weekly_tail_incidence_2020_2025.png")
+    print(" ", OUT_DIR / "weekly_tail_scatter_2020_2025.png")
+    print("\n--- preview ---")
+    print(df.head(12).to_string(index=False))
+
+
+if __name__ == "__main__":
+    main()
